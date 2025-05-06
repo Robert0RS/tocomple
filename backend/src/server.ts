@@ -5,6 +5,9 @@ import morgan from 'morgan'
 import { db } from './config/db'
 import budgetRouter from './routes/budgetRouter'
 import usuarioRouter from './routes/usuarioRouter'
+import categoriaRouter from './routes/categoriaRouter'
+import dependenciaRouter from './routes/dependenciaRouter'
+import incidenciaRouter from './routes/incidenciaRouter'
 
 async function connectDB(){
     try {
@@ -28,6 +31,8 @@ app.use(express.json())
 
 app.use('/api/budgets', budgetRouter)
 app.use('/api/Usuarios', usuarioRouter)
-
+app.use('/api/Categorias', categoriaRouter)
+app.use('/api/Dependencias', dependenciaRouter)
+app.use('/api/Incidencias', incidenciaRouter)
 
 export default app
