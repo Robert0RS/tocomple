@@ -1,5 +1,6 @@
 import type { Request, Response } from "express"
 import Incidencia from "../models/Incidencia"
+import Notificacion from "../models/Notificacion"
 import { Op } from "sequelize"
 
 export class IncidenciaController {
@@ -27,6 +28,23 @@ export class IncidenciaController {
         try {
             const incidencia = new Incidencia(req.body)
             await incidencia.save()
+
+            // Cargar la categoría si existe
+            if (incidencia.idCategoria) {
+                await incidencia.reload({
+                    include: [{ model: Incidencia.associations.categoria.target }]
+                })
+            }
+
+            // Crear notificación automática
+            const notificacion = new Notificacion({
+                titulo: 'Nueva Incidencia Creada',
+                mensaje: `Se ha creado una nueva incidencia: ${incidencia.titulo || 'Sin título'}`,
+                tipo: incidencia.categoria?.nombre || 'SIN_CATEGORIA',
+                idDependencia: incidencia.idDependencia
+            })
+            await notificacion.save()
+
             res.status(201).json('Incidencia creada correctamente')
         } catch (error) {
             if (error instanceof Error) {
