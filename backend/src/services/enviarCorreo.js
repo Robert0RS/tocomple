@@ -1,26 +1,41 @@
 const nodemailer = require('nodemailer');
 
+// Validar variables de entorno
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+  throw new Error('Las variables de entorno EMAIL_USER y EMAIL_PASSWORD son requeridas');
+}
+
 // Configurar el transporte de correo
 const transporter = nodemailer.createTransport({
-  service: 'gmail', 
+  service: 'gmail',
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD
   }
 });
 
+// Verificar la conexión al iniciar
+transporter.verify(function(error, success) {
+  if (error) {
+    console.error('Error al verificar la configuración del correo:', error);
+  } else {
+    console.log('Servidor de correo listo para enviar mensajes');
+  }
+});
+
 // Función para enviar notificación de reporte generado
 async function sendReportNotification(report) {
+  if (!report || !report.userEmail || !report.fileName) {
+    throw new Error('Faltan datos requeridos en el reporte');
+  }
+
   try {
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: report.userEmail, // Email del usuario que generó el reporte
+      to: report.userEmail,
       subject: `Nuevo reporte generado: ${report.fileName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <img src="cid:logo" alt="Logo" style="max-width: 150px;">
-          </div>
           <h2 style="color: #0051a8; text-align: center;">Reporte Generado Exitosamente</h2>
           <p>Se ha generado un nuevo reporte de incidencias con los siguientes detalles:</p>
           <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 15px 0;">
@@ -36,27 +51,26 @@ async function sendReportNotification(report) {
             Este es un correo automático, por favor no responda a este mensaje.
           </p>
         </div>
-      `,
-      attachments: [
-        {
-          filename: 'logo.png',
-          path: './public/assets/images/logo.png',
-          cid: 'logo'
-        },
-        // adjuntar el PDF del reporte
-        {
-          filename: report.fileName,
-          path: `./public/reports/${report.fileName}`
-        }
-      ]
+      `
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email enviado:', info.messageId);
+    console.log('Email enviado exitosamente:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Error al enviar email:', error);
-    return { success: false, error: error.message };
+    console.error('Error detallado al enviar email:', {
+      error: error.message,
+      code: error.code,
+      command: error.command
+    });
+    return { 
+      success: false, 
+      error: error.message,
+      details: {
+        code: error.code,
+        command: error.command
+      }
+    };
   }
 }
 
