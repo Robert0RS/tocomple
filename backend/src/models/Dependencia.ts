@@ -46,6 +46,13 @@ declare telefono?: string;
 })
 declare direccion?: string;
 
+@AllowNull(true)
+@Column({
+    type: DataType.STRING(255),
+    field: "contraseña",
+})
+declare contraseña?: string;
+
 @Default(true)
 @AllowNull(false)
 @Column({

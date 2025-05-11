@@ -24,6 +24,9 @@ router.post('/',
     body('direccion')
         .optional()
         .isLength({ max: 500 }).withMessage('La dirección no puede tener más de 500 caracteres'),
+    body('contraseña')
+        .optional()
+        .isLength({ min: 6, max: 255 }).withMessage('La contraseña debe tener entre 6 y 255 caracteres'),
     body('activo')
         .optional()
         .isBoolean().withMessage('El estado activo debe ser un valor booleano'),
@@ -57,6 +60,9 @@ router.put('/:id',
     body('direccion')
         .optional()
         .isLength({ max: 500 }).withMessage('La dirección no puede tener más de 500 caracteres'),
+    body('contraseña')
+        .optional()
+        .isLength({ min: 6, max: 255 }).withMessage('La contraseña debe tener entre 6 y 255 caracteres'),
     body('activo')
         .optional()
         .isBoolean().withMessage('El estado activo debe ser un valor booleano'),
