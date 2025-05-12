@@ -23,42 +23,91 @@ transporter.verify(function(error, success) {
   }
 });
 
-// Función para enviar notificación de reporte generado
-async function sendReportNotification(report) {
-  if (!report || !report.userEmail || !report.fileName) {
-    throw new Error('Faltan datos requeridos en el reporte');
+// Función para enviar notificación de incidencia nueva
+async function sendIncidentNotification(incident) {
+  if (!incident || !incident.email || !incident.id || !incident.descripcion || !incident.tipo || !incident.ciudadano) {
+    throw new Error('Faltan datos requeridos en la incidencia');
   }
 
   try {
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: report.userEmail,
-      subject: `Nuevo reporte generado: ${report.fileName}`,
+      to: incident.email,
+      subject: `Incidencia nueva creada: ${incident.id}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
-          <h2 style="color: #0051a8; text-align: center;">Reporte Generado Exitosamente</h2>
-          <p>Se ha generado un nuevo reporte de incidencias con los siguientes detalles:</p>
-          <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 15px 0;">
-            <p><strong>Nombre del archivo:</strong> ${report.fileName}</p>
-            <p><strong>Período:</strong> ${report.startDate} al ${report.endDate}</p>
-            <p><strong>Generado el:</strong> ${new Date(report.generatedAt).toLocaleString()}</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 0; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+          <!-- Header -->
+          <div style="background-color: #f8f3e9; padding: 15px; text-align: center; border-bottom: 1px solid #e0e0e0;">
+            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/placeholder-ob7miW3mUreePYfXdVwkpFWHthzoR5.svg?height=40&width=120" alt="Logo Sistema" style="height: 40px;">
           </div>
-          <p>Puede acceder al reporte a través del sistema o descargarlo desde el panel de reportes.</p>
-          <div style="text-align: center; margin-top: 20px;">
-            <a href="${process.env.APP_URL}/reportes.html" style="background-color: #0051a8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Ver Reportes</a>
+
+          <!-- Main Content -->
+          <div style="background-color: #ffffff; padding: 25px;">
+            <h1 style="color: #333333; text-align: center; font-size: 24px; margin-top: 0;">Nueva incidencia reportada</h1>
+
+            <div style="margin: 20px 0; text-align: center;">
+              <p style="font-size: 16px; color: #555;">
+                <strong>${incident.ciudadano}</strong> ha reportado una nueva incidencia
+              </p>
+              <p style="font-size: 14px; color: #777; margin-top: 5px;">
+                ${incident.fecha || new Date().toLocaleDateString()} a las ${incident.hora || new Date().toLocaleTimeString()}
+              </p>
+            </div>
+
+            <!-- Incident Details -->
+            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+              <h2 style="color: #444; font-size: 18px; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                Detalles de la incidencia
+              </h2>
+
+              <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <tr><td style="padding: 8px 0; color: #666; font-weight: bold; width: 40%;">Número:</td><td>${incident.id}</td></tr>
+                <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Tipo:</td><td>${incident.tipo}</td></tr>
+                <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Descripción:</td><td>${incident.descripcion}</td></tr>
+                <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Ubicación:</td><td>${incident.ubicacion || 'Sin especificar'}</td></tr>
+                <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Dependencia:</td><td>${incident.dependencia || 'General'}</td></tr>
+                <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Prioridad:</td><td>${incident.prioridad || 'Media'}</td></tr>
+                <tr><td style="padding: 8px 0; color: #666; font-weight: bold;">Estado:</td><td><span style="background-color: #FFF3CD; color: #856404; padding: 3px 8px; border-radius: 4px; font-size: 12px;">${incident.estado || 'Pendiente'}</span></td></tr>
+              </table>
+            </div>
+
+            <!-- Images -->
+            ${incident.imagenes?.length ? `
+              <div style="margin: 25px 0;">
+                <h3 style="color: #444; font-size: 16px; margin-bottom: 15px;">Imágenes adjuntas:</h3>
+                <div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+                  ${incident.imagenes.map(img => `
+                    <div style="width: 48%; margin-bottom: 10px;">
+                      <img src="${img}" alt="Imagen de incidencia" style="width: 100%; border-radius: 4px; border: 1px solid #eee;">
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            ` : ''}
+
+            <!-- Action Button -->
+            <div style="text-align: center; margin: 30px 0 15px;">
+              <a href="${process.env.APP_URL || 'https://sistema-incidencias.ejemplo.com'}/incidencia-detalle.html?id=${incident.id}" 
+                 style="background-color: #d68c60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                Ver detalles de la incidencia
+              </a>
+            </div>
           </div>
-          <p style="margin-top: 30px; font-size: 12px; color: #666; text-align: center;">
-            Este es un correo automático, por favor no responda a este mensaje.
-          </p>
+
+          <!-- Footer -->
+          <div style="background-color: #f8f3e9; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
+            <p style="margin: 0; color: #666; font-size: 14px;">Sistema de Gestión de Incidencias Municipales</p>
+            <p style="margin-top: 15px; font-size: 12px; color: #888;">© 2025 Municipio. Todos los derechos reservados.</p>
+          </div>
         </div>
       `
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email enviado exitosamente:', info.messageId);
+    console.log('Email de notificación de incidencia enviado exitosamente:', info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Error detallado al enviar email:', {
+    console.error('Error detallado al enviar email de incidencia:', {
       error: error.message,
       code: error.code,
       command: error.command
@@ -75,5 +124,5 @@ async function sendReportNotification(report) {
 }
 
 module.exports = {
-  sendReportNotification
+  sendIncidentNotification
 };
