@@ -7,6 +7,12 @@ const router = Router()
 
 router.get('/', DependenciaController.getAll)
 
+router.get('/email/:email',
+    param('email').isEmail().withMessage('Correo electrónico no válido'),
+    handleInputErrors,
+    DependenciaController.getByEmail
+)
+
 router.post('/', 
     body('nombre')
         .notEmpty().withMessage('El nombre de la dependencia no puede ir vacío')

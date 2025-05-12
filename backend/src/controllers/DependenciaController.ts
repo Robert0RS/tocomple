@@ -17,6 +17,27 @@ export class DependenciaController {
         }
     }
 
+    // Obtener dependencia por correo electrónico
+    static getByEmail = async (req: Request, res: Response) => {
+        try {
+            const { email } = req.params
+            const dependencia = await Dependencia.findOne({
+                where: {
+                    correoNotificacion: email
+                }
+            })
+            
+            if (!dependencia) {
+                res.status(404).json({error: 'Dependencia no encontrada'})
+                return
+            }
+            
+            res.json(dependencia)
+        } catch (error) {
+            res.status(500).json({error: 'Hubo un error al obtener la dependencia'})
+        }
+    }
+
     // Crear una nueva dependencia
     static create = async (req: Request, res: Response) => {
         try {
