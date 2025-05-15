@@ -9,6 +9,7 @@ import categoriaRouter from './routes/categoriaRouter'
 import dependenciaRouter from './routes/dependenciaRouter'
 import incidenciaRouter from './routes/incidenciaRouter'
 import notificacionRouter from './routes/notificacionRouter'
+import ciudadanoRouter from './routes/ciudadanoRouter'
 
 async function connectDB(){
     try {
@@ -36,5 +37,6 @@ app.use('/api/Categorias', categoriaRouter)
 app.use('/api/Dependencias', dependenciaRouter)
 app.use('/api/Incidencias', incidenciaRouter)
 app.use('/api/Notificaciones', notificacionRouter)
+app.use('/api/Ciudadanos', ciudadanoRouter)
 
 export default app
