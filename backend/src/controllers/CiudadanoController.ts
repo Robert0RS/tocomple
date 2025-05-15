@@ -56,11 +56,13 @@ export class CiudadanoController {
     static getByEmail = async (req: Request, res: Response) => {
         try {
             const { email } = req.params
+            console.log('Buscando ciudadano con email:', email);
+            
             const ciudadano = await Ciudadano.findOne({
                 where: {
                     correo: email
                 },
-                attributes: { exclude: ['contraseña'] }
+                attributes: ['idCiudadano', 'primerNombre', 'segundoNombre', 'primerApellido', 'segundoApellido', 'correo', 'numero', 'contraseña']
             })
             
             if (!ciudadano) {
@@ -68,8 +70,10 @@ export class CiudadanoController {
                 return
             }
             
+            console.log('Ciudadano encontrado:', ciudadano.toJSON());
             res.json(ciudadano)
         } catch (error) {
+            console.error('Error en getByEmail:', error);
             res.status(500).json({ error: 'Hubo un error al obtener el ciudadano' })
         }
     }
