@@ -76,4 +76,36 @@ export class UploadController {
       res.status(500).json({ error: 'Error al subir la imagen' })
     }
   }
+
+  static deleteImage = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { imageUrl } = req.body
+      
+      if (!imageUrl) {
+        res.status(400).json({ error: 'No se proporcionó la URL de la imagen' })
+        return
+      }
+
+      // Extraer el nombre del archivo de la URL
+      const filename = path.basename(imageUrl)
+      const filePath = path.join(__dirname, '../../public/images', filename)
+
+      // Verificar si el archivo existe
+      if (!fs.existsSync(filePath)) {
+        res.status(404).json({ error: 'La imagen no existe' })
+        return
+      }
+
+      // Eliminar el archivo
+      fs.unlinkSync(filePath)
+      console.log('Imagen eliminada:', filePath)
+
+      res.status(200).json({
+        message: 'Imagen eliminada correctamente'
+      })
+    } catch (error) {
+      console.error('Error al eliminar la imagen:', error)
+      res.status(500).json({ error: 'Error al eliminar la imagen' })
+    }
+  }
 } 

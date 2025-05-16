@@ -87,4 +87,5 @@ class Reporte extends Model<Reporte> {
   declare fechaActualizacion: Date;
 }
 
+
 export default Reporte; 

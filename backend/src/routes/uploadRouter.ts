@@ -15,4 +15,6 @@ router.get('/test', (req, res) => {
   res.json({ message: 'Upload router is working' })
 })
 
+router.delete('/', UploadController.deleteImage)
+
 export default router 
