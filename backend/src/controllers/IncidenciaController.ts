@@ -9,15 +9,32 @@ export class IncidenciaController {
             const incidencias = await Incidencia.findAll({
                 include: [{
                     model: Ciudadano,
-                    attributes: ['nombre', 'apellido', 'email']
+                    attributes: [
+                        'primerNombre',
+                        'segundoNombre',
+                        'primerApellido',
+                        'segundoApellido',
+                        'correo'
+                    ]
                 }],
                 order: [
                     ['fechaCreacion', 'DESC']
                 ]
             })
             
-            res.json(incidencias)
+            // Transformar los datos para el frontend
+            const incidenciasFormateadas = incidencias.map(incidencia => ({
+                ...incidencia.toJSON(),
+                ciudadano: {
+                    nombre: `${incidencia.ciudadano.primerNombre} ${incidencia.ciudadano.segundoNombre || ''}`.trim(),
+                    apellido: `${incidencia.ciudadano.primerApellido} ${incidencia.ciudadano.segundoApellido || ''}`.trim(),
+                    email: incidencia.ciudadano.correo
+                }
+            }))
+            
+            res.json(incidenciasFormateadas)
         } catch (error) {
+            console.error('Error al obtener incidencias:', error)
             res.status(500).json({ error: 'Hubo un error al obtener las incidencias' })
         }
     }
@@ -25,14 +42,34 @@ export class IncidenciaController {
     // Crear una nueva incidencia
     static create = async (req: Request, res: Response) => {
         try {
+            console.log('Creating incident with data:', req.body);
             const incidencia = new Incidencia(req.body)
             await incidencia.save()
             res.status(201).json('Incidencia creada correctamente')
         } catch (error) {
+            console.error('Error creating incident:', error);
             if (error instanceof Error) {
-                res.status(400).json({ error: error.message })
+                if (error.name === 'SequelizeValidationError') {
+                    res.status(400).json({ 
+                        error: 'Error de validación',
+                        details: error.message
+                    })
+                } else if (error.name === 'SequelizeUniqueConstraintError') {
+                    res.status(400).json({ 
+                        error: 'Error de duplicación',
+                        details: error.message
+                    })
+                } else {
+                    res.status(400).json({ 
+                        error: 'Error al crear la incidencia',
+                        details: error.message
+                    })
+                }
             } else {
-                res.status(500).json({ error: 'Hubo un error al crear la incidencia' })
+                res.status(500).json({ 
+                    error: 'Error interno del servidor',
+                    details: 'Hubo un error al crear la incidencia'
+                })
             }
         }
     }
@@ -44,7 +81,13 @@ export class IncidenciaController {
             const incidencia = await Incidencia.findByPk(id, {
                 include: [{
                     model: Ciudadano,
-                    attributes: ['nombre', 'apellido', 'email']
+                    attributes: [
+                        'primerNombre',
+                        'segundoNombre',
+                        'primerApellido',
+                        'segundoApellido',
+                        'correo'
+                    ]
                 }]
             })
             
@@ -54,8 +97,19 @@ export class IncidenciaController {
                 return
             }
             
-            res.json(incidencia)
+            // Transformar los datos para el frontend
+            const incidenciaFormateada = {
+                ...incidencia.toJSON(),
+                ciudadano: {
+                    nombre: `${incidencia.ciudadano.primerNombre} ${incidencia.ciudadano.segundoNombre || ''}`.trim(),
+                    apellido: `${incidencia.ciudadano.primerApellido} ${incidencia.ciudadano.segundoApellido || ''}`.trim(),
+                    email: incidencia.ciudadano.correo
+                }
+            }
+            
+            res.json(incidenciaFormateada)
         } catch (error) {
+            console.error('Error al obtener incidencia:', error)
             res.status(500).json({ error: 'Hubo un error al obtener la incidencia' })
         }
     }
@@ -106,15 +160,32 @@ export class IncidenciaController {
                 where: { estadoReporte: estado },
                 include: [{
                     model: Ciudadano,
-                    attributes: ['nombre', 'apellido', 'email']
+                    attributes: [
+                        'primerNombre',
+                        'segundoNombre',
+                        'primerApellido',
+                        'segundoApellido',
+                        'correo'
+                    ]
                 }],
                 order: [
                     ['fechaCreacion', 'DESC']
                 ]
             })
             
-            res.json(incidencias)
+            // Transformar los datos para el frontend
+            const incidenciasFormateadas = incidencias.map(incidencia => ({
+                ...incidencia.toJSON(),
+                ciudadano: {
+                    nombre: `${incidencia.ciudadano.primerNombre} ${incidencia.ciudadano.segundoNombre || ''}`.trim(),
+                    apellido: `${incidencia.ciudadano.primerApellido} ${incidencia.ciudadano.segundoApellido || ''}`.trim(),
+                    email: incidencia.ciudadano.correo
+                }
+            }))
+            
+            res.json(incidenciasFormateadas)
         } catch (error) {
+            console.error('Error al obtener incidencias por estado:', error)
             res.status(500).json({ error: 'Hubo un error al obtener las incidencias' })
         }
     }
@@ -127,15 +198,32 @@ export class IncidenciaController {
                 where: { idCiudadano },
                 include: [{
                     model: Ciudadano,
-                    attributes: ['nombre', 'apellido', 'email']
+                    attributes: [
+                        'primerNombre',
+                        'segundoNombre',
+                        'primerApellido',
+                        'segundoApellido',
+                        'correo'
+                    ]
                 }],
                 order: [
                     ['fechaCreacion', 'DESC']
                 ]
             })
             
-            res.json(incidencias)
+            // Transformar los datos para el frontend
+            const incidenciasFormateadas = incidencias.map(incidencia => ({
+                ...incidencia.toJSON(),
+                ciudadano: {
+                    nombre: `${incidencia.ciudadano.primerNombre} ${incidencia.ciudadano.segundoNombre || ''}`.trim(),
+                    apellido: `${incidencia.ciudadano.primerApellido} ${incidencia.ciudadano.segundoApellido || ''}`.trim(),
+                    email: incidencia.ciudadano.correo
+                }
+            }))
+            
+            res.json(incidenciasFormateadas)
         } catch (error) {
+            console.error('Error al obtener incidencias por ciudadano:', error)
             res.status(500).json({ error: 'Hubo un error al obtener las incidencias del ciudadano' })
         }
     }

@@ -39,8 +39,9 @@ router.get('/:id',
 router.post('/',
     body('categoria')
         .notEmpty().withMessage('La categoría es obligatoria'),
-    body('descripcion')
-        .notEmpty().withMessage('La descripción es obligatoria'),
+    body('descripcionCiudadano')
+        .optional()
+        .notEmpty().withMessage('La descripción no puede estar vacía'),
     body('latitud')
         .notEmpty().withMessage('La latitud es obligatoria')
         .isFloat().withMessage('La latitud debe ser un número'),
