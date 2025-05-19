@@ -10,7 +10,7 @@ import dependenciaRouter from './routes/dependenciaRouter'
 import incidenciaRouter from './routes/incidenciaRouter'
 import notificacionRouter from './routes/notificacionRouter'
 import ciudadanoRouter from './routes/ciudadanoRouter'
-import reporteRouter from './routes/reporteRouter'
+
 import uploadRouter from './routes/uploadRouter'
 
 async function connectDB(){
@@ -42,7 +42,7 @@ app.use('/api/Dependencias', dependenciaRouter)
 app.use('/api/Incidencias', incidenciaRouter)
 app.use('/api/Notificaciones', notificacionRouter)
 app.use('/api/Ciudadanos', ciudadanoRouter)
-app.use('/api/Reportes', reporteRouter)
+
 app.use('/api/upload', uploadRouter)
 
 // Middleware para manejar errores 404

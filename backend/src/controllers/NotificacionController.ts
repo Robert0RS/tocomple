@@ -12,7 +12,8 @@ export class NotificacionController {
                 include: [
                     { association: 'usuario' },
                     { association: 'dependencia' }
-                ]
+                ],
+                
             })
             
             res.json(notificaciones)

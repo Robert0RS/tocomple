@@ -1,6 +1,6 @@
 import express from 'express'
 import path from 'path'
-import reporteRouter from './routes/reporteRouter'
+import reporteRouter from '../../Olvidados/reporteRouter'
 import uploadRouter from './routes/uploadRouter'
 
 const app = express()

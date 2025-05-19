@@ -13,5 +13,5 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
     },
-    "include": ["src/**/*.ts"]
+    "include": ["src/**/*.ts", "../Olvidados/Reporte.ts", "../Olvidados/ReporteController.ts", "../Olvidados/IncidenciaController.ts", "../Olvidados/incidenciaRouter.ts", "../Olvidados/reporteRouter.ts"]
 }

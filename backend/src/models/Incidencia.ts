@@ -1,28 +1,12 @@
-import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, AllowNull, 
-  Default, ForeignKey, BelongsTo } from "sequelize-typescript";
-import Dependencia from "./Dependencia";
-import Categoria from "./Categoria";
-  
+import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, AllowNull, Default, ForeignKey, BelongsTo } from "sequelize-typescript";
+import Ciudadano from "./Ciudadano";
+
 @Table({
   tableName: "incidencias",
   //timestamps: false,
   freezeTableName: true,
-  validate: {
-    estadoValido() {
-      const estados = ['Pendiente', 'En proceso', 'Resuelto', 'Cancelado'];
-      if (!estados.includes(this.estado)) {
-        throw new Error(`Estado inválido: ${this.estado}`);
-      }
-    },
-    prioridadValida() {
-      if (this.prioridad < 1 || this.prioridad > 5) {
-        throw new Error('Prioridad debe estar entre 1 y 5');
-      }
-    }
-  }
 })
 class Incidencia extends Model<Incidencia> {
-
   @PrimaryKey
   @AutoIncrement
   @Column({
@@ -33,90 +17,116 @@ class Incidencia extends Model<Incidencia> {
 
   @AllowNull(false)
   @Column({
+    type: DataType.STRING(50),
+  })
+  declare categoria: string;
+
+  @AllowNull(true)
+  @Column({
+    type: DataType.TEXT,
+    field: "descripcion_dependencia",
+  })
+  declare descripcionDependencia?: string;
+
+  @AllowNull(true)
+  @Column({
+    type: DataType.TEXT,
+    field: "descripcion_ciudadano",
+  })
+  declare descripcionCiudadano?: string;
+
+  @AllowNull(true)
+  @Column({
+    type: DataType.TEXT,
+    field: "descripcion_ayuntamiento",
+  })
+  declare descripcionAyuntamiento?: string;
+
+  @AllowNull(true)
+  @Column({
+    type: DataType.STRING(255),
+  })
+  declare ubicacion?: string;
+
+  @AllowNull(true)
+  @Column({
+    type: DataType.STRING(255),
+  })
+  declare calle?: string;
+
+  @AllowNull(true)
+  @Column({
+    type: DataType.STRING(255),
+  })
+  declare colonia?: string;
+
+  @AllowNull(true)
+  @Column({
+    type: DataType.STRING(5),
+    field: "codigo_postal",
+  })
+  declare codigoPostal?: string;
+
+  @AllowNull(true)
+  @Column({
     type: DataType.STRING(100),
   })
-  declare titulo: string;
+  declare ciudad?: string;
+
+  @AllowNull(true)
+  @Column({
+    type: DataType.STRING(100),
+    field: "estado_ubicacion",
+  })
+  declare estadoUbicacion?: string;
 
   @AllowNull(false)
   @Column({
-    type: DataType.TEXT,
+    type: DataType.FLOAT,
   })
-  declare descripcion: string;
+  declare latitud: number;
+
+  @AllowNull(false)
+  @Column({
+    type: DataType.FLOAT,
+  })
+  declare longitud: number;
 
   @AllowNull(false)
   @Column({
     type: DataType.STRING(255),
+    field: "imagen_url",
   })
-  declare ubicacion: string;
-
-  @AllowNull(true)
-  @Column({
-    type: DataType.DECIMAL(10, 8),
-  })
-  declare latitud?: number;
-
-  @AllowNull(true)
-  @Column({
-    type: DataType.DECIMAL(11, 8),
-  })
-  declare longitud?: number;
+  declare imagenUrl: string;
 
   @AllowNull(false)
+  @Default('pendiente')
   @Column({
-    type: DataType.STRING(100),
-    field: "nombre_ciudadano",
+    type: DataType.ENUM('pendiente', 'en_proceso', 'resuelto', 'rechazado'),
   })
-  declare nombreCiudadano: string;
+  declare estadoReporte: 'pendiente' | 'en_proceso' | 'resuelto' | 'rechazado';
 
-  @AllowNull(true)
-  @Column({
-    type: DataType.STRING(100),
-    field: "correo_ciudadano",
-  })
-  declare correoCiudadano?: string;
-
-  @AllowNull(true)
-  @Column({
-    type: DataType.STRING(20),
-    field: "telefono_ciudadano",
-  })
-  declare telefonoCiudadano?: string;
-
-  @ForeignKey(() => Dependencia)
   @AllowNull(false)
+  @Default(1)
   @Column({
     type: DataType.INTEGER,
-    field: "id_dependencia",
-  })
-  declare idDependencia: number;
-
-  @BelongsTo(() => Dependencia)
-  declare dependencia: Dependencia;
-
-  @ForeignKey(() => Categoria)
-  @AllowNull(true)
-  @Column({
-    type: DataType.INTEGER,
-    field: "id_categoria",
-  })
-  declare idCategoria?: number;
-
-  @BelongsTo(() => Categoria)
-  declare categoria?: Categoria;
-
-  @AllowNull(false)
-  @Default('Pendiente')
-  @Column({
-    type: DataType.ENUM('Pendiente', 'En proceso', 'Resuelto', 'Cancelado'),
-  })
-  declare estado: 'Pendiente' | 'En proceso' | 'Resuelto' | 'Cancelado';
-
-  @Default(3)
-  @AllowNull(false)
-  @Column({
-    type: DataType.INTEGER,
+    validate: {
+      min: 1,
+      max: 5
+    }
   })
   declare prioridad: number;
+
+  @ForeignKey(() => Ciudadano)
+  @AllowNull(false)
+  @Column({
+    type: DataType.INTEGER,
+    field: "id_ciudadano",
+  })
+  declare idCiudadano: number;
+
+  @BelongsTo(() => Ciudadano)
+  declare ciudadano: Ciudadano;
 
   @Default(DataType.NOW)
   @AllowNull(false)
@@ -133,13 +143,6 @@ class Incidencia extends Model<Incidencia> {
     field: "fecha_actualizacion",
   })
   declare fechaActualizacion: Date;
-
-  @AllowNull(true)
-  @Column({
-    type: DataType.DATE,
-    field: "fecha_cierre",
-  })
-  declare fechaCierre?: Date;
 }
 
-export default Incidencia;
+export default Incidencia; 
