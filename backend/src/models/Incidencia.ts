@@ -1,5 +1,6 @@
 import { Table, Column, Model, DataType, PrimaryKey, AutoIncrement, AllowNull, Default, ForeignKey, BelongsTo } from "sequelize-typescript";
 import Ciudadano from "./Ciudadano";
+import Dependencia from "./Dependencia";
 
 @Table({
   tableName: "incidencias",
@@ -127,6 +128,17 @@ class Incidencia extends Model<Incidencia> {
 
   @BelongsTo(() => Ciudadano)
   declare ciudadano: Ciudadano;
+
+  @ForeignKey(() => Dependencia)
+  @AllowNull(true)
+  @Column({
+    type: DataType.INTEGER,
+    field: "id_dependencia",
+  })
+  declare idDependencia?: number;
+
+  @BelongsTo(() => Dependencia)
+  declare dependencia?: Dependencia;
 
   @Default(DataType.NOW)
   @AllowNull(false)

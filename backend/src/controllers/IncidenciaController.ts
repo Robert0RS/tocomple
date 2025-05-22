@@ -1,22 +1,29 @@
 import type { Request, Response } from "express"
 import Incidencia from "../models/Incidencia"
 import Ciudadano from "../models/Ciudadano"
+import Dependencia from "../models/Dependencia"
 
 export class IncidenciaController {
     // Obtener todas las incidencias
     static getAll = async (req: Request, res: Response) => {
         try {
             const incidencias = await Incidencia.findAll({
-                include: [{
-                    model: Ciudadano,
-                    attributes: [
-                        'primerNombre',
-                        'segundoNombre',
-                        'primerApellido',
-                        'segundoApellido',
-                        'correo'
-                    ]
-                }],
+                include: [
+                    {
+                        model: Ciudadano,
+                        attributes: [
+                            'primerNombre',
+                            'segundoNombre',
+                            'primerApellido',
+                            'segundoApellido',
+                            'correo'
+                        ]
+                    },
+                    {
+                        model: Dependencia,
+                        attributes: ['nombre']
+                    }
+                ],
                 order: [
                     ['fechaCreacion', 'DESC']
                 ]
@@ -29,7 +36,8 @@ export class IncidenciaController {
                     nombre: `${incidencia.ciudadano.primerNombre} ${incidencia.ciudadano.segundoNombre || ''}`.trim(),
                     apellido: `${incidencia.ciudadano.primerApellido} ${incidencia.ciudadano.segundoApellido || ''}`.trim(),
                     email: incidencia.ciudadano.correo
-                }
+                },
+                dependencia: incidencia.dependencia ? incidencia.dependencia.nombre : null
             }))
             
             res.json(incidenciasFormateadas)
@@ -79,16 +87,22 @@ export class IncidenciaController {
         try {
             const { id } = req.params
             const incidencia = await Incidencia.findByPk(id, {
-                include: [{
-                    model: Ciudadano,
-                    attributes: [
-                        'primerNombre',
-                        'segundoNombre',
-                        'primerApellido',
-                        'segundoApellido',
-                        'correo'
-                    ]
-                }]
+                include: [
+                    {
+                        model: Ciudadano,
+                        attributes: [
+                            'primerNombre',
+                            'segundoNombre',
+                            'primerApellido',
+                            'segundoApellido',
+                            'correo'
+                        ]
+                    },
+                    {
+                        model: Dependencia,
+                        attributes: ['nombre']
+                    }
+                ]
             })
             
             if (!incidencia) {
@@ -104,7 +118,8 @@ export class IncidenciaController {
                     nombre: `${incidencia.ciudadano.primerNombre} ${incidencia.ciudadano.segundoNombre || ''}`.trim(),
                     apellido: `${incidencia.ciudadano.primerApellido} ${incidencia.ciudadano.segundoApellido || ''}`.trim(),
                     email: incidencia.ciudadano.correo
-                }
+                },
+                dependencia: incidencia.dependencia ? incidencia.dependencia.nombre : null
             }
             
             res.json(incidenciaFormateada)
@@ -158,16 +173,22 @@ export class IncidenciaController {
             const { estado } = req.params
             const incidencias = await Incidencia.findAll({
                 where: { estadoReporte: estado },
-                include: [{
-                    model: Ciudadano,
-                    attributes: [
-                        'primerNombre',
-                        'segundoNombre',
-                        'primerApellido',
-                        'segundoApellido',
-                        'correo'
-                    ]
-                }],
+                include: [
+                    {
+                        model: Ciudadano,
+                        attributes: [
+                            'primerNombre',
+                            'segundoNombre',
+                            'primerApellido',
+                            'segundoApellido',
+                            'correo'
+                        ]
+                    },
+                    {
+                        model: Dependencia,
+                        attributes: ['nombre']
+                    }
+                ],
                 order: [
                     ['fechaCreacion', 'DESC']
                 ]
@@ -180,7 +201,8 @@ export class IncidenciaController {
                     nombre: `${incidencia.ciudadano.primerNombre} ${incidencia.ciudadano.segundoNombre || ''}`.trim(),
                     apellido: `${incidencia.ciudadano.primerApellido} ${incidencia.ciudadano.segundoApellido || ''}`.trim(),
                     email: incidencia.ciudadano.correo
-                }
+                },
+                dependencia: incidencia.dependencia ? incidencia.dependencia.nombre : null
             }))
             
             res.json(incidenciasFormateadas)
@@ -196,16 +218,22 @@ export class IncidenciaController {
             const { idCiudadano } = req.params
             const incidencias = await Incidencia.findAll({
                 where: { idCiudadano },
-                include: [{
-                    model: Ciudadano,
-                    attributes: [
-                        'primerNombre',
-                        'segundoNombre',
-                        'primerApellido',
-                        'segundoApellido',
-                        'correo'
-                    ]
-                }],
+                include: [
+                    {
+                        model: Ciudadano,
+                        attributes: [
+                            'primerNombre',
+                            'segundoNombre',
+                            'primerApellido',
+                            'segundoApellido',
+                            'correo'
+                        ]
+                    },
+                    {
+                        model: Dependencia,
+                        attributes: ['nombre']
+                    }
+                ],
                 order: [
                     ['fechaCreacion', 'DESC']
                 ]
@@ -218,7 +246,8 @@ export class IncidenciaController {
                     nombre: `${incidencia.ciudadano.primerNombre} ${incidencia.ciudadano.segundoNombre || ''}`.trim(),
                     apellido: `${incidencia.ciudadano.primerApellido} ${incidencia.ciudadano.segundoApellido || ''}`.trim(),
                     email: incidencia.ciudadano.correo
-                }
+                },
+                dependencia: incidencia.dependencia ? incidencia.dependencia.nombre : null
             }))
             
             res.json(incidenciasFormateadas)

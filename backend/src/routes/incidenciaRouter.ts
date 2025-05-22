@@ -57,6 +57,9 @@ router.post('/',
     body('prioridad')
         .optional()
         .isInt({ min: 1, max: 5 }).withMessage('La prioridad debe ser un número entre 1 y 5'),
+    body('idDependencia')
+        .optional()
+        .isInt({ min: 1 }).withMessage('La dependencia debe ser un ID numérico válido'),
     handleInputErrors,
     IncidenciaController.create
 )
@@ -73,6 +76,9 @@ router.put('/:id',
     body('prioridad')
         .optional()
         .isInt({ min: 1, max: 5 }).withMessage('La prioridad debe ser un número entre 1 y 5'),
+    body('idDependencia')
+        .optional()
+        .isInt({ min: 1 }).withMessage('La dependencia debe ser un ID numérico válido'),
     handleInputErrors,
     IncidenciaController.update
 )
