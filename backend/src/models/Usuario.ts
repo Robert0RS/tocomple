@@ -1,15 +1,30 @@
 import {Table,Column,Model,DataType,PrimaryKey,AutoIncrement,AllowNull,Unique,Default,ForeignKey,BelongsTo,} from "sequelize-typescript";
+import bcrypt from 'bcrypt'
 import Dependencia from "./Dependencia";
 
 @Table({
     tableName: "usuarios",
-    //timestamps: false,
     freezeTableName: true,
+    timestamps: false, // Desactiva las marcas de tiempo automáticas
     validate: {
         checkDependenciaRol() {
         if (this.rol === 'dependencia' && this.idDependencia == null) {
             throw new Error('id_dependencia must be set when rol is dependencia');
         }
+        }
+    },
+    hooks: {
+        beforeCreate: async (usuario: Usuario) => {
+            if (usuario.passwordHash) {
+                const salt = await bcrypt.genSalt(10)
+                usuario.passwordHash = await bcrypt.hash(usuario.passwordHash, salt)
+            }
+        },
+        beforeUpdate: async (usuario: Usuario) => {
+            if (usuario.changed('passwordHash')) {
+                const salt = await bcrypt.genSalt(10)
+                usuario.passwordHash = await bcrypt.hash(usuario.passwordHash, salt)
+            }
         }
     }
 })
@@ -102,6 +117,11 @@ class Usuario extends Model<Usuario> {
         field: "fecha_actualizacion",
     })
     declare fechaActualizacion: Date;
+
+    // Método para verificar contraseñas
+    async validarPassword(password: string): Promise<boolean> {
+        return bcrypt.compare(password, this.passwordHash)
+    }
 }
 
 export default Usuario;

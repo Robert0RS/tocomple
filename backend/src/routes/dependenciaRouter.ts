@@ -40,6 +40,15 @@ router.post('/',
     DependenciaController.create
 )
 
+router.post('/login',
+    body('correo').isEmail().withMessage('Correo electrónico no válido'),
+    body('contraseña').notEmpty().withMessage('La contraseña no puede ir vacía'),
+    handleInputErrors,
+    (req, res, next) => {
+        Promise.resolve(DependenciaController.login(req, res, next)).catch(next);
+    }
+)
+
 router.get('/:id',
     param('id').isInt().withMessage('ID no válido')
         .custom(value => value > 0).withMessage('ID no válido'),

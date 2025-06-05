@@ -1,9 +1,24 @@
 import {Table,Column,Model,DataType,PrimaryKey,AutoIncrement,Default,AllowNull,} from "sequelize-typescript";
+import bcrypt from 'bcrypt'
   
 @Table({
     tableName: "dependencias",
-    //timestamps: false,      // Desactiva createdAt/updatedAt automáticos
+    timestamps: true, // Habilita las marcas de tiempo automáticas
     freezeTableName: true,  // Evita pluralización automática
+    hooks: {
+        beforeCreate: async (dependencia: Dependencia) => {
+            if (dependencia.contraseña) {
+                const salt = await bcrypt.genSalt(10)
+                dependencia.contraseña = await bcrypt.hash(dependencia.contraseña, salt)
+            }
+        },
+        beforeUpdate: async (dependencia: Dependencia) => {
+            if (dependencia.changed('contraseña')) {
+                const salt = await bcrypt.genSalt(10)
+                dependencia.contraseña = await bcrypt.hash(dependencia.contraseña, salt)
+            }
+        }
+    }
 })
 class Dependencia extends Model<Dependencia> {
 
@@ -21,18 +36,20 @@ declare idDependencia: number;
 })
 declare nombre: string;
 
-@AllowNull(true)
-@Column({
-    type: DataType.TEXT,
-})
-declare descripcion?: string;
-
-@AllowNull(true)
+@AllowNull(false)
 @Column({
     type: DataType.STRING(100),
+    unique: true,
     field: "correo_notificacion",
 })
-declare correoNotificacion?: string;
+declare correoNotificacion: string;
+
+@AllowNull(false)
+@Column({
+    type: DataType.STRING(255),
+    field: "contraseña",
+})
+declare contraseña: string;
 
 @AllowNull(true)
 @Column({
@@ -45,13 +62,6 @@ declare telefono?: string;
     type: DataType.TEXT,
 })
 declare direccion?: string;
-
-@AllowNull(true)
-@Column({
-    type: DataType.STRING(255),
-    field: "contraseña",
-})
-declare contraseña?: string;
 
 @Default(true)
 @AllowNull(false)
@@ -75,6 +85,11 @@ declare fechaCreacion: Date;
     field: "fecha_actualizacion",
 })
 declare fechaActualizacion: Date;
+
+// Método para validar contraseñas
+async validarContraseña(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.contraseña)
+}
 }
 
 export default Dependencia;

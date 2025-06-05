@@ -1,0 +1,20 @@
+
+==========================
+       JWT Test Report
+==========================
+
+🔑 Token generado:
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sIjoiYWRtaW4iLCJpYXQiOjE3NDkxMTY0ODcsImV4cCI6MTc0OTEyMDA4N30.Cgj1zqrXV0jLHSTQ7FRg9m5mu8Q7BANXtcAkK2vD4Lg
+
+🔍 Resultado de la verificación:
+✅ Token válido
+
+📄 Datos decodificados: {
+  "id": 1,
+  "rol": "admin",
+  "iat": 1749116487,
+  "exp": 1749120087
+}
+
+==========================
+    

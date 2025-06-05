@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import colors from 'colors'
 import morgan from 'morgan'
+import helmet from 'helmet' // Importar Helmet
 import { db } from './config/db'
 import budgetRouter from './routes/budgetRouter'
 import usuarioRouter from './routes/usuarioRouter'
@@ -10,7 +11,6 @@ import dependenciaRouter from './routes/dependenciaRouter'
 import incidenciaRouter from './routes/incidenciaRouter'
 import notificacionRouter from './routes/notificacionRouter'
 import ciudadanoRouter from './routes/ciudadanoRouter'
-
 import uploadRouter from './routes/uploadRouter'
 
 async function connectDB(){
@@ -28,6 +28,7 @@ const app = express()
 
 app.use(cors())
 app.use(morgan('dev'))
+app.use(helmet()) // Usar Helmet para configurar encabezados de seguridad
 
 app.use(express.json())
 
@@ -41,8 +42,17 @@ app.use('/api/Dependencias', dependenciaRouter)
 app.use('/api/Incidencias', incidenciaRouter)
 app.use('/api/Notificaciones', notificacionRouter)
 app.use('/api/Ciudadanos', ciudadanoRouter)
-
 app.use('/api/upload', uploadRouter)
+
+// Middleware para advertencias de Self-XSS
+app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    console.warn(
+        '%c¡Advertencia de seguridad: no pegues codigo aqui!',
+        'color: red; font-size: 20px; font-weight: bold;'
+    );
+    next();
+})
 
 // Middleware para manejar errores 404
 app.use((req, res, next) => {

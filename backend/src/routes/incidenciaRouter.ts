@@ -2,11 +2,12 @@ import { Router } from 'express'
 import { body, param } from 'express-validator'
 import { IncidenciaController } from '../controllers/IncidenciaController'
 import { handleInputErrors } from '../middleware/validation'
+import { authenticateToken } from '../utils/auth'
 
 const router = Router()
 
 // Obtener todas las incidencias
-router.get('/', IncidenciaController.getAll)
+router.get('/', authenticateToken, IncidenciaController.getAll)
 
 // Obtener incidencias por estado
 router.get('/estado/:estado',
@@ -37,6 +38,7 @@ router.get('/:id',
 
 // Crear una nueva incidencia
 router.post('/',
+    authenticateToken,
     body('categoria')
         .notEmpty().withMessage('La categoría es obligatoria'),
     body('descripcionCiudadano')
@@ -92,4 +94,4 @@ router.delete('/:id',
     IncidenciaController.delete
 )
 
-export default router 
+export default router
