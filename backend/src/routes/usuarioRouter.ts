@@ -3,6 +3,7 @@ import { body, param } from 'express-validator'
 import { UsuarioController } from '../controllers/UsuarioController'
 import { handleInputErrors } from '../middleware/validation'
 import { generateToken } from '../utils/auth'
+import jwt from 'jsonwebtoken'
 
 const router = Router()
 
@@ -91,19 +92,20 @@ router.post('/login',
     body('correo').isEmail().withMessage('Correo electrónico no válido'),
     body('password').notEmpty().withMessage('La contraseña no puede ir vacía'),
     handleInputErrors,
-    async (req, res) => {
+    async (req, res, next) => {
         try {
-            const { correo, password } = req.body
-            const usuario = await UsuarioController.login(correo, password)
+            const { correo, password } = req.body;
+            const usuario = await UsuarioController.login(correo, password) as { id: number, rol: string } | null;
             if (!usuario) {
-                return res.status(401).json({ error: 'Credenciales inválidas' })
+                res.status(401).json({ error: 'Credenciales inválidas' });
+                return;
             }
 
-            const token = generateToken({ id: usuario.id, rol: usuario.rol })
-            res.json({ token, usuario })
+            const token = generateToken({ id: usuario.id, rol: usuario.rol });
+            res.json({ token, usuario });
         } catch (error) {
-            console.error('Error en el login:', error)
-            res.status(500).json({ error: 'Error interno del servidor' })
+            console.error('Error en el login:', error);
+            next(error); // Pasa el error al middleware de manejo de errores
         }
     }
 )
