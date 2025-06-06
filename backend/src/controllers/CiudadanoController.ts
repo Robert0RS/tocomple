@@ -90,7 +90,12 @@ export class CiudadanoController {
                 return
             }
 
-            // No permitir actualizar campos sensibles directamente
+            // Si se está actualizando la contraseña, asegurarse de que se envíe como string
+            if (req.body.contraseña) {
+                ciudadano.contraseña = req.body.contraseña;
+            }
+
+            // Actualizar los demás campos
             const { contraseña, ...updateData } = req.body
             await ciudadano.update(updateData)
             res.json('Ciudadano actualizado correctamente')
