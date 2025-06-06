@@ -29,7 +29,20 @@ const app = express()
 
 app.use(cors())
 app.use(morgan('dev'))
-app.use(helmet()) // Usar Helmet para configurar encabezados de seguridad
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'"]
+        }
+    },
+    crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: false,
+    crossOriginResourcePolicy: false
+})) // Configuración personalizada de Helmet para mayor seguridad
 
 app.use(express.json())
 
