@@ -1,6 +1,5 @@
 import type { Request, Response } from "express"
 import Dependencia from "../models/Dependencia"
-import bcrypt from "bcrypt"
 
 export class DependenciaController {
     // Obtener todas las dependencias
@@ -40,17 +39,9 @@ export class DependenciaController {
     }
 
     // Crear una nueva dependencia
-    static create = async (req: Request, res: Response) => {
+    static create = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { contraseña, ...data } = req.body
-            const salt = await bcrypt.genSalt(10)
-            const hashedPassword = await bcrypt.hash(contraseña, salt)
-
-            const dependencia = await Dependencia.create({
-                ...data,
-                contraseña: hashedPassword
-            })
-
+            const dependencia = await Dependencia.create(req.body)
             res.status(201).json('Dependencia creada correctamente')
         } catch (error) {
             res.status(500).json({ error: 'Hubo un error al crear la dependencia' })
@@ -114,13 +105,35 @@ export class DependenciaController {
     }
 
     // Iniciar sesión
-    static async login(req: import('express').Request, res: import('express').Response, next: import('express').NextFunction) {
+    static login = async (req: Request, res: Response): Promise<void> => {
         try {
             const { correo, contraseña } = req.body;
-            // TODO: Validar las credenciales del usuario y responder en consecuencia
-            return res.status(200).json({ message: 'Inicio de sesión exitoso (placeholder)' });
+
+            const dependencia = await Dependencia.findOne({
+                where: { correoNotificacion: correo }
+            });
+
+            if (!dependencia) {
+                res.status(401).json({ error: 'Credenciales inválidas' });
+                return;
+            }
+
+            const contraseñaValida = await dependencia.verifyPassword(contraseña);
+            if (!contraseñaValida) {
+                res.status(401).json({ error: 'Credenciales inválidas' });
+                return;
+            }
+
+            res.json({
+                dependencia: {
+                    id: dependencia.idDependencia,
+                    nombre: dependencia.nombre,
+                    correoNotificacion: dependencia.correoNotificacion
+                }
+            });
         } catch (error) {
-            next(error);
+            console.error('Error en login:', error);
+            res.status(500).json({ error: 'Error en el servidor' });
         }
     }
 }

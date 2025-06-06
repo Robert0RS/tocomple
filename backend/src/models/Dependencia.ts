@@ -1,24 +1,10 @@
-import {Table,Column,Model,DataType,PrimaryKey,AutoIncrement,Default,AllowNull,} from "sequelize-typescript";
+import {Table,Column,Model,DataType,PrimaryKey,AutoIncrement,Default,AllowNull,BeforeCreate,BeforeUpdate} from "sequelize-typescript";
 import bcrypt from 'bcrypt'
   
 @Table({
     tableName: "dependencias",
     timestamps: true, // Habilita las marcas de tiempo automáticas
     freezeTableName: true,  // Evita pluralización automática
-    hooks: {
-        beforeCreate: async (dependencia: Dependencia) => {
-            if (dependencia.contraseña) {
-                const salt = await bcrypt.genSalt(10)
-                dependencia.contraseña = await bcrypt.hash(dependencia.contraseña, salt)
-            }
-        },
-        beforeUpdate: async (dependencia: Dependencia) => {
-            if (dependencia.changed('contraseña')) {
-                const salt = await bcrypt.genSalt(10)
-                dependencia.contraseña = await bcrypt.hash(dependencia.contraseña, salt)
-            }
-        }
-    }
 })
 class Dependencia extends Model<Dependencia> {
 
@@ -86,9 +72,31 @@ declare fechaCreacion: Date;
 })
 declare fechaActualizacion: Date;
 
-// Método para validar contraseñas
-async validarContraseña(password: string): Promise<boolean> {
-    return bcrypt.compare(password, this.contraseña)
+// Método para hashear la contraseña
+private async hashPassword(password: string): Promise<string> {
+    const salt = await bcrypt.genSalt(10);
+    return bcrypt.hash(password, salt);
+}
+
+// Hook para hashear la contraseña antes de crear
+@BeforeCreate
+async hashPasswordBeforeCreate() {
+    if (this.contraseña) {
+        this.contraseña = await this.hashPassword(this.contraseña);
+    }
+}
+
+// Hook para hashear la contraseña antes de actualizar
+@BeforeUpdate
+async hashPasswordBeforeUpdate() {
+    if (this.changed('contraseña')) {
+        this.contraseña = await this.hashPassword(this.contraseña);
+    }
+}
+
+// Método para verificar la contraseña
+async verifyPassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.contraseña);
 }
 }
 
