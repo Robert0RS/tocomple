@@ -1,5 +1,6 @@
 import type { Request, Response } from "express"
 import Dependencia from "../models/Dependencia"
+import jwt from 'jsonwebtoken'
 
 export class DependenciaController {
     // Obtener todas las dependencias
@@ -124,7 +125,19 @@ export class DependenciaController {
                 return;
             }
 
+            // Generar el token JWT
+            const token = jwt.sign(
+                {
+                    id: dependencia.idDependencia,
+                    correo: dependencia.correoNotificacion,
+                    tipo: 'dependencia'
+                },
+                process.env.JWT_SECRET || 'tu_secreto_jwt',
+                { expiresIn: '24h' }
+            );
+
             res.json({
+                token,
                 dependencia: {
                     id: dependencia.idDependencia,
                     nombre: dependencia.nombre,
@@ -133,6 +146,31 @@ export class DependenciaController {
             });
         } catch (error) {
             console.error('Error en login:', error);
+            res.status(500).json({ error: 'Error en el servidor' });
+        }
+    }
+
+    // Verificar token
+    static verifyToken = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const dependencia = await Dependencia.findByPk(req.usuario?.id, {
+                attributes: { exclude: ['contraseña'] }
+            });
+
+            if (!dependencia) {
+                res.status(404).json({ error: 'Dependencia no encontrada' });
+                return;
+            }
+
+            res.json({
+                dependencia: {
+                    id: dependencia.idDependencia,
+                    nombre: dependencia.nombre,
+                    correoNotificacion: dependencia.correoNotificacion
+                }
+            });
+        } catch (error) {
+            console.error('Error en verifyToken:', error);
             res.status(500).json({ error: 'Error en el servidor' });
         }
     }
