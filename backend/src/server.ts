@@ -12,6 +12,7 @@ import incidenciaRouter from './routes/incidenciaRouter'
 import notificacionRouter from './routes/notificacionRouter'
 import ciudadanoRouter from './routes/ciudadanoRouter'
 import uploadRouter from './routes/uploadRouter'
+import authRouter from './routes/authRouter'
 
 async function connectDB(){
     try {
@@ -43,6 +44,7 @@ app.use('/api/Incidencias', incidenciaRouter)
 app.use('/api/Notificaciones', notificacionRouter)
 app.use('/api/Ciudadanos', ciudadanoRouter)
 app.use('/api/upload', uploadRouter)
+app.use('/api/auth', authRouter)
 
 // Middleware para advertencias de Self-XSS
 app.use((req, res, next) => {

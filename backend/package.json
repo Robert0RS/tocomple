@@ -15,6 +15,7 @@
   "author": "Carlos Rosales",
   "license": "ISC",
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
     "bcrypt": "^6.0.0",
     "colors": "^1.4.0",
     "cors": "^2.8.5",
