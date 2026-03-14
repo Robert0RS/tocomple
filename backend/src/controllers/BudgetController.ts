@@ -49,7 +49,7 @@ export class BudgetController{
         try {
             console.log(req.params.id)
             const { id } = req.params
-            const budget = await Budget.findByPk(id)
+            const budget = await Budget.findByPk(id as string)
             if(!budget){
                 const error = new Error(' Presupuesto no encontrado')
                 res.status(404).json({error:error.message})
@@ -68,7 +68,7 @@ export class BudgetController{
         try {
             console.log(req.params.id)
             const { id } = req.params
-            const budget = await Budget.findByPk(id)
+            const budget = await Budget.findByPk(id as string)
             
             if(!budget){
                 const error = new Error(' Presupuesto no encontrado')
@@ -90,7 +90,7 @@ export class BudgetController{
         try {
             console.log(req.params.id)
             const { id } = req.params
-            const budget = await Budget.findByPk(id)
+            const budget = await Budget.findByPk(id as string)
             if(!budget){
                 const error = new Error(' Presupuesto no encontrado')
                 res.status(404).json({error:error.message})
