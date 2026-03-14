@@ -37,7 +37,7 @@ export class UsuarioController {
     static getById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const usuario = await Usuario.findByPk(id, {
+            const usuario = await Usuario.findByPk(id as string, {
                 attributes: { exclude: ['passwordHash', 'refreshToken'] }
             })
             
@@ -56,7 +56,7 @@ export class UsuarioController {
     static updateById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const usuario = await Usuario.findByPk(id)
+            const usuario = await Usuario.findByPk(id as string)
             
             if (!usuario) {
                 const error = new Error('Usuario no encontrado')
@@ -81,7 +81,7 @@ export class UsuarioController {
     static deleteById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const usuario = await Usuario.findByPk(id)
+            const usuario = await Usuario.findByPk(id as string)
             
             if (!usuario) {
                 const error = new Error('Usuario no encontrado')

@@ -41,7 +41,7 @@ export class NotificacionController {
     static getById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const notificacion = await Notificacion.findByPk(id, {
+            const notificacion = await Notificacion.findByPk(id as string, {
                 include: [
                     { association: 'usuario' },
                     { association: 'dependencia' }
@@ -63,7 +63,7 @@ export class NotificacionController {
     static updateById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const notificacion = await Notificacion.findByPk(id)
+            const notificacion = await Notificacion.findByPk(id as string)
             
             if (!notificacion) {
                 const error = new Error('Notificación no encontrada')
@@ -86,7 +86,7 @@ export class NotificacionController {
     static deleteById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const notificacion = await Notificacion.findByPk(id)
+            const notificacion = await Notificacion.findByPk(id as string)
             
             if (!notificacion) {
                 const error = new Error('Notificación no encontrada')
@@ -149,7 +149,7 @@ export class NotificacionController {
     static marcarComoLeida = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const notificacion = await Notificacion.findByPk(id)
+            const notificacion = await Notificacion.findByPk(id as string)
             
             if (!notificacion) {
                 const error = new Error('Notificación no encontrada')

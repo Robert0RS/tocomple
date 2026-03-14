@@ -32,7 +32,7 @@ export class CategoriaController {
     static getById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const categoria = await Categoria.findByPk(id)
+            const categoria = await Categoria.findByPk(id as string)
             
             if (!categoria) {
                 const error = new Error('Categoría no encontrada')
@@ -50,7 +50,7 @@ export class CategoriaController {
     static updateById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const categoria = await Categoria.findByPk(id)
+            const categoria = await Categoria.findByPk(id as string)
             
             if (!categoria) {
                 const error = new Error('Categoría no encontrada')
@@ -69,7 +69,7 @@ export class CategoriaController {
     static deleteById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const categoria = await Categoria.findByPk(id)
+            const categoria = await Categoria.findByPk(id as string)
             
             if (!categoria) {
                 const error = new Error('Categoría no encontrada')

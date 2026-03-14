@@ -53,7 +53,7 @@ export class DependenciaController {
     static getById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const dependencia = await Dependencia.findByPk(id)
+            const dependencia = await Dependencia.findByPk(id as string)
             
             if (!dependencia) {
                 const error = new Error('Dependencia no encontrada')
@@ -71,7 +71,7 @@ export class DependenciaController {
     static updateById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const dependencia = await Dependencia.findByPk(id)
+            const dependencia = await Dependencia.findByPk(id as string)
             
             if (!dependencia) {
                 const error = new Error('Dependencia no encontrada')
@@ -90,7 +90,7 @@ export class DependenciaController {
     static deleteById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const dependencia = await Dependencia.findByPk(id)
+            const dependencia = await Dependencia.findByPk(id as string)
             
             if (!dependencia) {
                 const error = new Error('Dependencia no encontrada')

@@ -86,7 +86,7 @@ export class IncidenciaController {
     static getById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const incidencia = await Incidencia.findByPk(id, {
+            const incidencia = await Incidencia.findByPk(id as string, {
                 include: [
                     {
                         model: Ciudadano,
@@ -133,7 +133,7 @@ export class IncidenciaController {
     static update = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const incidencia = await Incidencia.findByPk(id)
+            const incidencia = await Incidencia.findByPk(id as string)
             
             if (!incidencia) {
                 const error = new Error('Incidencia no encontrada')
@@ -152,7 +152,7 @@ export class IncidenciaController {
     static delete = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const incidencia = await Incidencia.findByPk(id)
+            const incidencia = await Incidencia.findByPk(id as string)
             
             if (!incidencia) {
                 const error = new Error('Incidencia no encontrada')

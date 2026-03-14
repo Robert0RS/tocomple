@@ -37,7 +37,7 @@ export class CiudadanoController {
     static getById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const ciudadano = await Ciudadano.findByPk(id, {
+            const ciudadano = await Ciudadano.findByPk(id as string, {
                 attributes: { exclude: ['contraseña'] }
             })
             
@@ -82,7 +82,7 @@ export class CiudadanoController {
     static updateById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const ciudadano = await Ciudadano.findByPk(id)
+            const ciudadano = await Ciudadano.findByPk(id as string)
             
             if (!ciudadano) {
                 const error = new Error('Ciudadano no encontrado')
@@ -107,7 +107,7 @@ export class CiudadanoController {
     static deleteById = async (req: Request, res: Response) => {
         try {
             const { id } = req.params
-            const ciudadano = await Ciudadano.findByPk(id)
+            const ciudadano = await Ciudadano.findByPk(id as string)
             
             if (!ciudadano) {
                 const error = new Error('Ciudadano no encontrado')
