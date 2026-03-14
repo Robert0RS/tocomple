@@ -6,7 +6,8 @@ export const db = new Sequelize( process.env.DATABASE_URL, {
     models:[__dirname + '/../models/**/*'],
     dialectOptions:{
         ssl:{
-            require:false //no tenemos un ssl-conexion segura
+            require: true, 
+            rejectUnauthorized: false
         }
     }
 
